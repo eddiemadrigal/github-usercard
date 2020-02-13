@@ -3,6 +3,8 @@
            https://api.github.com/users/<your name>
 */
 
+
+
 /* Step 2: Inspect and study the data coming back, this is YOUR 
    github info! You will need to understand the structure of this 
    data in order to use it to build your component function 
@@ -24,10 +26,19 @@
           user, and adding that card to the DOM.
 */
 
-const followersArray = [];
+const instructorsObject = {
+  username: 'tetondan',
+  username: 'dustinmyers',
+  username: 'justsml',
+  username: 'luishrd',
+  username: 'bigknell'
+}
+
 
 /* Step 3: Create a function that accepts a single object as its only argument,
           Using DOM methods and properties, create a component that will return the following DOM element:
+
+
 
 <div class="card">
   <img src={image url of user} />
@@ -46,10 +57,68 @@ const followersArray = [];
 
 */
 
-/* List of LS Instructors Github username's: 
-  tetondan
-  dustinmyers
-  justsml
-  luishrd
-  bigknell
-*/
+
+
+function profileCard(data) {
+  // create elements 
+  const divCard = document.createElement('div'),
+    img = document.createElement('img'),
+    divCardInfo = document.createElement('div'),
+    h3Name = document.createElement('h3'),
+    pUsername = document.createElement('p'),
+    pLocation = document.createElement('p'),
+    pProfile = document.createElement('p'),
+    aProfileURL = document.createElement('a'),
+    pFollowers = document.createElement('p'),
+    pFollowing = document.createElement('p'),
+    pBio = document.createElement('p')
+
+  // create HTML structure
+  divCard.append(img, divCardInfo);
+  divCardInfo.append(h3Name, pUsername, pLocation, pProfile, aProfileURL, pFollowers, pFollowing, pBio);
+  pProfile.append(aProfileURL);
+
+  // add classes
+  divCard.classList.add('card');
+  divCardInfo.classList.add('card-info');
+  h3Name.classList.add('name');
+  pUsername.classList.add('username');
+
+  // add content
+  img.src = data.avatar_url;
+  h3Name.textContent = data.name;
+  pUsername.textContent = data.login;
+  pLocation.textContent = data.location;
+  aProfileURL.innerHTML = `Profile: <a href='${data.html_url}' target='_blank'>${data.html_url}</a>`;
+  pFollowers.textContent = `# of happy followers: ${data.followers}`;
+  pFollowing.textContent = `Cheerfully following ${data.following} friends`;
+  pBio.textContent = data.bio;
+
+  return divCard;
+
+}
+
+const entryPoint = document.querySelector('.cards'),
+  h1 = document.createElement('h1');
+entryPoint.append(h1);
+
+axios.get('https://api.github.com/users/eddiemadrigal')
+  .then(response => {
+    h1.textContent = `${response.data.name}'s GitHub Profile`
+    entryPoint.append(profileCard(response.data));
+  });
+
+axios.get('https://api.github.com/users/eddiemadrigal/followers')
+  .then(response => {
+
+    response.data.map(item => {
+
+      axios.get(item.followers_url)
+      .then(result => {
+        item.followers = result.data.length;
+        entryPoint.append(profileCard(item));
+      });
+
+      
+    })
+  });
