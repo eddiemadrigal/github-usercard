@@ -40,6 +40,8 @@ const instructorsObject = {
 
 
 
+/* 
+
 <div class="card">
   <img src={image url of user} />
   <div class="card-info">
@@ -86,10 +88,11 @@ function profileCard(data) {
 
   // add content
   img.src = data.avatar_url;
+  img.setAttribute('style', 'object_fit:scale');
   h3Name.textContent = data.name;
   pUsername.textContent = data.login;
   pLocation.textContent = data.location;
-  aProfileURL.innerHTML = `Profile: <a href='${data.html_url}' target='_blank'>${data.html_url}</a>`;
+  aProfileURL.innerHTML = `Profile: <a href='${data.html_url}' target='_blank'>${data.login}</a>`;
   pFollowers.textContent = `# of happy followers: ${data.followers}`;
   pFollowing.textContent = `Cheerfully following ${data.following} friends`;
   pBio.textContent = data.bio;
@@ -104,24 +107,22 @@ entryPoint.append(h1);
 
 axios.get('https://api.github.com/users/eddiemadrigal')
   .then(response => {
-    h1.textContent = `${response.data.name}'s GitHub Profile`
     entryPoint.append(profileCard(response.data));
-  });
-
-axios.get('https://api.github.com/users/eddiemadrigal/followers')
+    return response.data;
+  })
   .then(response => {
+    axios.get(response.followers_url)
+      .then(response => {
+        response.data.map(item => {
+          axios.get(item.url)
+            .then(result => {
+              axios.get(result.data.url)
+              .then(result => {
+                entryPoint.append(profileCard(result.data));
+              })
+            })
+        });
+      })
+  })
 
-    response.data.map(item => {
-
-      axios.get(item.followers_url)
-      .then(result1 => {
-        item.followers = result1.data.length;
-        entryPoint.append(profileCard(item));
-      });
-
-      //console.log(item);
-      
-    });
-  });
-
-  // token: a422841d78f360d523036cb148ac213df43ddc64
+// 
