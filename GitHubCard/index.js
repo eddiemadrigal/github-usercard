@@ -114,11 +114,14 @@ axios.get('https://api.github.com/users/eddiemadrigal/followers')
     response.data.map(item => {
 
       axios.get(item.followers_url)
-      .then(result => {
-        item.followers = result.data.length;
+      .then(result1 => {
+        item.followers = result1.data.length;
         entryPoint.append(profileCard(item));
       });
 
+      //console.log(item);
       
-    })
+    });
   });
+
+  // token: a422841d78f360d523036cb148ac213df43ddc64
