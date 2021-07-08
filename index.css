@@ -61,6 +61,14 @@ html {
 body {
   background: linear-gradient(141deg, #9fb8ad 0%, #1fc8db 51%, #2cb5e8 75%);
 }
+
+h1 {
+  display: block;
+  font-size: 3rem;
+  margin-bottom: 3%;
+  text-align: center;
+}
+
 .container {
   max-width: 800px;
   margin: 50px auto;
@@ -115,6 +123,7 @@ body {
 .card p {
   font-size: 1.4rem;
   margin-bottom: 3px;
+  line-height: 2.5rem;
 }
 
 .card .username {
